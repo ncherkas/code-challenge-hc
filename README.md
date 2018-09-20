@@ -260,4 +260,7 @@ Here are some of the required things as well as my ideas that were not implement
 2) UI. I did some research and had ideas of implementing it with the Twitter Bootstrap + React.js. After running the React CLI I figure out that I won't complete this in time. We could even deploy it separately into NGINx or something.
 3) Separate microservice for the JWT authentication. As you can find, I've implemented a so-called dummy User Service which reads the data from the application config.
 4) Deploy the application itself into K8S. Docker image and YAMLs for the deployment and service should be easy to do. Plus, the Hazelcast IMDG has a support of the K8S deployment and discovery.
-5) Issue with K8S Java Client. At my setup, each several hours the Java Client was failing due to the expired credentials. Only by invoking `kubectl` the credentials were getting refreshed. According to open GH issues seems like the refresh is not implemented yet. But I still double-checking and investigating.      
+5) Issue with K8S Java Client. At my setup, each several hours the Java Client was failing due to the expired credentials. Only by invoking `kubectl` the credentials were getting refreshed. According to open GH issues seems like the refresh is not implemented yet. But I still double-checking and investigating.  
+6) Switching to Java 10.
+7) Lombok annotations.. Maybe.
+
