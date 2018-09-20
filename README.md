@@ -2,7 +2,7 @@
 _Code Challenge for the Hazelcast Cloud_
 
 ## Architecture and implementation details
-Architecture is consists of the multiple layers working on top of the K8S API:
+The architecture consists of multiple layers working on top of the K8S API:
 ```
                         REST API consumers
                                 |
@@ -13,6 +13,10 @@ Architecture is consists of the multiple layers working on top of the K8S API:
                                 |
                                 V
                     Spring Data Hazelcast Repository
+                                |
+                                |
+                                V
+              Hazelcast Map Store (i.e. the write-through cache)
                                 |
                                 |
                                 V
@@ -35,7 +39,7 @@ Architecture is consists of the multiple layers working on top of the K8S API:
 
 Here are the reasons why I decided to use the Hazelcast IMDG:
  - we already have the K8S backend responsible for the persistent storage and operations
- - Hazelcast IMDG with embedded topology enables the High-Available deployments comparing to the embedded database
+ - Hazelcast IMDG clustering enables the High-Available deployments comparing to the embedded database
  - no need to define the static schema as we do in case of SQL, no need for transactions... less complexity     
 
 ## API
@@ -145,7 +149,7 @@ X-XSS-Protection: 1; mode=block
 
 3. List Deployments:
 ```
-# It's either a paginated list, or the list with all available deployments (no pagination params provided)
+# It's either a paginated list, or the list with all available deployments (if no pagination params provided)
 
 $ http -v GET "<HOST>:<PORT>/deployments?page=0&size=2" "Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuY2hlcmthcyIsImV4cCI6MTUzNzgzNjM3NH0.OAB42AMGKb9i-ZB22PqScR6A3RwJyWB7VQs8C76FpItvsrVOOtjTltvjg5mWN20ugdzEUkJEAVIOtnTEdOQJHQ"
 
@@ -241,18 +245,19 @@ X-XSS-Protection: 1; mode=block
 Please follow the next steps:
 1) Make sure to setup a K8S SDK. I tested primarily with GCP so I've setup `gcloud`,`kubectl` and enabled K8S API for the GCP K8S Engine.   
 2) Build the project - `mvn clean install`
-3) Run the produced jar, you can find it inside of the `target` folder - `java -jar target/k8s-orchestrator-api-0.0.1-SNAPSHOT.jar`
+3) Run the produced jar file, you can find it inside of the `target` folder - `java -jar target/k8s-orchestrator-api-0.0.1-SNAPSHOT.jar`
 The following program args are available:
  - `--server.port` specifies a server port used by the Spring Boot 
  - `--k8s.orchestrator.api.user.username` username used for the login process  
  - `--k8s.orchestrator.api.user.password` password used for the login process (must be bcrypt-hashed)
+ 4) Call APIs. Above you can find the example of Deployment JSON for creation (the NGINx deployment).
  
 Note, that you can run a cluster of the several applications, giving a different `--server.port` to each instance.   
 
 ## TODOs... many of them
-Here are some of the required things as well as my ideas:
-1) Unit tests. Unfortunately didn't find a time to do this. Good thing was that the Fabric8 Java client even had a support to setup the K8S API Mock Server.
-2) UI. I did some research and had ideas to build it with Twitter Bootstrap + React.js. After running the React CLI I figure out that I won't complete this in time. We even could deploy it separately into NGINx or something.
-3) Separate microservice for the authentication. As you can find, I've implemented a so-called dummy User Service which reads the data from application config.
+Here are some of the required things as well as my ideas that were not implemented:
+1) Unit tests. Unfortunately didn't find a time to do this. Good thing was that the Fabric8 Java client even had a support for the K8S API Mock Server.
+2) UI. I did some research and had ideas of implementing it with the Twitter Bootstrap + React.js. After running the React CLI I figure out that I won't complete this in time. We could even deploy it separately into NGINx or something.
+3) Separate microservice for the JWT authentication. As you can find, I've implemented a so-called dummy User Service which reads the data from the application config.
 4) Deploy the application itself into K8S. Docker image and YAMLs for the deployment and service should be easy to do. Plus, the Hazelcast IMDG has a support of the K8S deployment and discovery.
-5) Issue with K8S Java Client. At my setup, each several hours the Java Client was failing due to the expired credentials. Only by invoking `kubectl` the credentials were getting refreshed. According to open GH issues seems like the refresh is not implemented yet. But I still double-checking and investigating.     
+5) Issue with K8S Java Client. At my setup, each several hours the Java Client was failing due to the expired credentials. Only by invoking `kubectl` the credentials were getting refreshed. According to open GH issues seems like the refresh is not implemented yet. But I still double-checking and investigating.      
