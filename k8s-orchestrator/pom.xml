@@ -48,7 +48,6 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>spring-data-hazelcast</artifactId>
-            <!-- TODO: move version to property -->
             <version>${spring-data-hazelcast.version}</version>
         </dependency>
         <dependency>

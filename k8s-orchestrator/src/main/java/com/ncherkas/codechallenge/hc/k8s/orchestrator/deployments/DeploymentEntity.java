@@ -67,11 +67,6 @@ public class DeploymentEntity implements Comparable<DeploymentEntity>, Serializa
         return this.createAt.compareTo(other.getCreateAt());
     }
 
-    /**
-     * TODO: javadocs
-     * @param deployment
-     * @return
-     */
     public static DeploymentEntity of(io.fabric8.kubernetes.api.model.apps.Deployment deployment) {
         checkNotNull(deployment);
 
