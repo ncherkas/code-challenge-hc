@@ -109,6 +109,7 @@ public class K8sOrchestratorConfig {
             String key = deploymentEntity.getId();
 
             if (action == Action.MODIFIED && deploymentsMap.localKeySet().contains(key)) {
+                // We're evicting and refreshing the value stored by the Hazelcast
                 deploymentsMap.loadAll(Collections.singleton(key), true);
                 LOGGER.info("event {} for: {}", action.name(), deployment);
                 try {
